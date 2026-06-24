@@ -1,0 +1,12 @@
+/node_modules
+/.next
+/out
+/build
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+.env*.local
+.vercel
+
+# Generated at build time by scripts/generate-icons.mjs
+/public/icons

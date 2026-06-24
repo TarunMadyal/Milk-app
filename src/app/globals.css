@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light dark;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+body {
+  @apply bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Big, thumb-friendly tap targets everywhere */
+button {
+  touch-action: manipulation;
+}
+
+/* Hide number input spinners for a cleaner big-button feel */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+@layer components {
+  .btn-primary {
+    @apply flex min-h-touch w-full items-center justify-center gap-2 rounded-2xl bg-brand px-5 text-xl font-bold text-white shadow-lg active:scale-[0.98] active:bg-brand-dark disabled:opacity-50;
+  }
+  .btn-secondary {
+    @apply flex min-h-touch w-full items-center justify-center gap-2 rounded-2xl border-2 border-brand bg-white px-5 text-xl font-bold text-brand shadow active:scale-[0.98] dark:bg-slate-900;
+  }
+  .card {
+    @apply rounded-2xl bg-white p-4 shadow-sm dark:bg-slate-900;
+  }
+  .field-label {
+    @apply mb-1 block text-lg font-semibold text-slate-600 dark:text-slate-300;
+  }
+  .field-input {
+    @apply w-full rounded-2xl border-2 border-slate-300 bg-white px-4 py-3 text-xl font-semibold text-slate-900 outline-none focus:border-brand dark:border-slate-700 dark:bg-slate-800 dark:text-white;
+  }
+}
