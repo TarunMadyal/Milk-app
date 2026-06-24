@@ -44,6 +44,10 @@ export default function Dashboard() {
         ➕ New Delivery
       </Link>
 
+      <Link href="/stock" className="btn-secondary">
+        📥 Incoming Stock
+      </Link>
+
       {/* Today summary */}
       <div className="grid grid-cols-2 gap-3">
         <div className="card">

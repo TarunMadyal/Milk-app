@@ -109,6 +109,7 @@ export function buildSeedData(): AppData {
     customers,
     products,
     deliveries: [],
+    stockEntries: [],
     settings: { storeName: STORE_NAME, darkMode: false },
     version: 1,
   };

@@ -22,6 +22,8 @@ export function loadData(): AppData {
       saveData(seed);
       return seed;
     }
+    // Migration: older saved data has no stock entries.
+    if (!parsed.stockEntries) parsed.stockEntries = [];
     return parsed;
   } catch {
     const seed = buildSeedData();
