@@ -66,6 +66,28 @@ export default function ReportsPage() {
       .slice(0, 5);
   }, [data.customers, balanceFor]);
 
+  // Total quantity (and amount) sold per product, for the selected range.
+  const productSales = useMemo(() => {
+    const totals = new Map<
+      string,
+      { name: string; qty: number; amount: number }
+    >();
+    for (const d of scoped) {
+      for (const it of d.items) {
+        const cur = totals.get(it.productId) ?? {
+          name: it.productName,
+          qty: 0,
+          amount: 0,
+        };
+        cur.qty += it.quantity;
+        cur.amount += it.lineTotal;
+        totals.set(it.productId, cur);
+      }
+    }
+    return [...totals.values()].sort((a, b) => b.qty - a.qty);
+  }, [scoped]);
+
+  const totalQty = productSales.reduce((s, p) => s + p.qty, 0);
   const maxTop = topCustomers[0]?.total ?? 1;
 
   return (
@@ -112,6 +134,40 @@ export default function ReportsPage() {
           {rupees(outstanding)}
         </p>
       </div>
+
+      {/* Products sold — total quantity per product for the range */}
+      <section>
+        <div className="mb-2 flex items-end justify-between">
+          <h2 className="text-xl font-bold">📦 Products Sold</h2>
+          <span className="text-base font-semibold text-slate-500">
+            {totalQty} total
+          </span>
+        </div>
+        {productSales.length === 0 ? (
+          <div className="card text-center text-slate-500">
+            No products sold {range === "day" ? "today" : `this ${range}`}.
+          </div>
+        ) : (
+          <div className="card divide-y divide-slate-100 dark:divide-slate-800">
+            {productSales.map((p) => (
+              <div
+                key={p.name}
+                className="flex items-center justify-between py-2 first:pt-0 last:pb-0"
+              >
+                <span className="text-lg font-bold">{p.name}</span>
+                <div className="flex items-baseline gap-3">
+                  <span className="text-2xl font-extrabold text-brand dark:text-brand-light">
+                    {p.qty}
+                  </span>
+                  <span className="w-20 text-right text-base font-semibold text-slate-500">
+                    {rupees(p.amount)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
 
       {/* Top customers */}
       <section>
