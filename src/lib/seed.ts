@@ -50,6 +50,7 @@ const SHOP_NAMES = [
   "Tousif",
   "Murli",
   "XYZ 2",
+  "HAP MAIN",
 ];
 
 // Regular and dealer price tables, exactly as provided by the owner.
@@ -111,6 +112,6 @@ export function buildSeedData(): AppData {
     deliveries: [],
     stockEntries: [],
     settings: { storeName: STORE_NAME, darkMode: false },
-    version: 1,
+    version: 2,
   };
 }

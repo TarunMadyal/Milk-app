@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useStore } from "@/lib/store";
 import { formatDate, formatTime, isSameDay } from "@/lib/format";
 import type { StockItem } from "@/lib/types";
+import QtyStepper from "@/components/QtyStepper";
 
 export default function StockPage() {
   const router = useRouter();
@@ -96,26 +97,11 @@ export default function StockPage() {
                   </p>
                 )}
               </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setQuantity(p.id, q - 1)}
-                  disabled={q === 0}
-                  className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-200 text-3xl font-bold disabled:opacity-40 dark:bg-slate-800"
-                  aria-label={`Decrease ${p.name}`}
-                >
-                  −
-                </button>
-                <span className="w-10 text-center text-2xl font-extrabold">
-                  {q}
-                </span>
-                <button
-                  onClick={() => setQuantity(p.id, q + 1)}
-                  className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand text-3xl font-bold text-white"
-                  aria-label={`Increase ${p.name}`}
-                >
-                  +
-                </button>
-              </div>
+              <QtyStepper
+                value={q}
+                onChange={(v) => setQuantity(p.id, v)}
+                label={p.name}
+              />
             </div>
           );
         })}
