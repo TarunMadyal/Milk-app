@@ -5,10 +5,11 @@ import { usePathname } from "next/navigation";
 
 const items = [
   { href: "/", label: "Home", icon: "🏠" },
+  { href: "/stock", label: "Stock", icon: "📥" },
   { href: "/new", label: "New", icon: "➕" },
-  { href: "/history", label: "History", icon: "📜" },
+  { href: "/history", label: "Shops", icon: "📜" },
   { href: "/reports", label: "Reports", icon: "📊" },
-  { href: "/settings", label: "Settings", icon: "⚙️" },
+  { href: "/settings", label: "Setup", icon: "⚙️" },
 ];
 
 export default function BottomNav() {
@@ -26,7 +27,7 @@ export default function BottomNav() {
             <li key={it.href} className="flex-1">
               <Link
                 href={it.href}
-                className={`flex min-h-touch flex-col items-center justify-center gap-0.5 py-2 text-sm font-semibold ${
+                className={`flex min-h-touch flex-col items-center justify-center gap-0.5 px-0.5 py-2 text-xs font-semibold ${
                   active
                     ? "text-brand dark:text-brand-light"
                     : "text-slate-500 dark:text-slate-400"

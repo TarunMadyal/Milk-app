@@ -39,10 +39,26 @@ export interface Settings {
   darkMode: boolean;
 }
 
+// Stock the owner picks up from the source/dairy before delivery.
+export interface StockItem {
+  productId: string;
+  productName: string;
+  quantity: number;
+}
+
+export interface StockEntry {
+  id: string;
+  date: string; // ISO date-time
+  items: StockItem[];
+  totalQty: number;
+  createdAt: string;
+}
+
 export interface AppData {
   customers: Customer[];
   products: Product[];
   deliveries: Delivery[];
+  stockEntries: StockEntry[];
   settings: Settings;
   version: number;
 }

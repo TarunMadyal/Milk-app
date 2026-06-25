@@ -1,7 +1,7 @@
 // Simple offline-first service worker for the app shell.
 // Data lives in localStorage, so we only need to cache the static shell.
-const CACHE = "milk-store-v1";
-const SHELL = ["/", "/new", "/history", "/reports", "/settings", "/pay", "/manifest.json"];
+const CACHE = "milk-store-v2";
+const SHELL = ["/", "/new", "/history", "/reports", "/settings", "/pay", "/stock", "/manifest.json"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(

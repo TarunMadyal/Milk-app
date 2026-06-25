@@ -22,6 +22,24 @@ export function loadData(): AppData {
       saveData(seed);
       return seed;
     }
+    // Migration: older saved data has no stock entries.
+    if (!parsed.stockEntries) parsed.stockEntries = [];
+    // Migration to v2: ensure the HAP MAIN shop exists (added later).
+    if ((parsed.version ?? 1) < 2) {
+      const exists = parsed.customers.some(
+        (c) => c.name.trim().toLowerCase() === "hap main"
+      );
+      if (!exists) {
+        parsed.customers.push({
+          id: newId(),
+          name: "HAP MAIN",
+          isDealer: false,
+          createdAt: new Date().toISOString(),
+        });
+      }
+      parsed.version = 2;
+      saveData(parsed);
+    }
     return parsed;
   } catch {
     const seed = buildSeedData();

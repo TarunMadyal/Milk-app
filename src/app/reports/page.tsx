@@ -66,6 +66,43 @@ export default function ReportsPage() {
       .slice(0, 5);
   }, [data.customers, balanceFor]);
 
+  const scopedStock = useMemo(
+    () => data.stockEntries.filter((e) => inRange(e.date, range)),
+    [data.stockEntries, range]
+  );
+
+  // Per product for the selected range: incoming (taken from source),
+  // sold (delivered), and left (incoming − sold).
+  const productRows = useMemo(() => {
+    const map = new Map<
+      string,
+      { name: string; incoming: number; sold: number; amount: number }
+    >();
+    const get = (id: string, name: string) => {
+      let cur = map.get(id);
+      if (!cur) {
+        cur = { name, incoming: 0, sold: 0, amount: 0 };
+        map.set(id, cur);
+      }
+      return cur;
+    };
+    for (const e of scopedStock) {
+      for (const it of e.items) get(it.productId, it.productName).incoming += it.quantity;
+    }
+    for (const d of scoped) {
+      for (const it of d.items) {
+        const row = get(it.productId, it.productName);
+        row.sold += it.quantity;
+        row.amount += it.lineTotal;
+      }
+    }
+    return [...map.values()]
+      .map((r) => ({ ...r, left: r.incoming - r.sold }))
+      .sort((a, b) => b.sold - a.sold || b.incoming - a.incoming);
+  }, [scoped, scopedStock]);
+
+  const totalIn = productRows.reduce((s, p) => s + p.incoming, 0);
+  const totalSold = productRows.reduce((s, p) => s + p.sold, 0);
   const maxTop = topCustomers[0]?.total ?? 1;
 
   return (
@@ -112,6 +149,57 @@ export default function ReportsPage() {
           {rupees(outstanding)}
         </p>
       </div>
+
+      {/* Per-product stock: Incoming (from source) vs Sold vs Left */}
+      <section>
+        <div className="mb-2 flex items-end justify-between">
+          <h2 className="text-xl font-bold">📦 Products: In / Sold / Left</h2>
+        </div>
+        {productRows.length === 0 ? (
+          <div className="card text-center text-slate-500">
+            No stock or sales {range === "day" ? "today" : `this ${range}`}.
+          </div>
+        ) : (
+          <div className="card">
+            <div className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-x-3 border-b border-slate-200 pb-1 text-sm font-bold text-slate-500 dark:border-slate-700">
+              <span>Product</span>
+              <span className="w-12 text-right">In</span>
+              <span className="w-12 text-right">Sold</span>
+              <span className="w-12 text-right">Left</span>
+            </div>
+            {productRows.map((p) => (
+              <div
+                key={p.name}
+                className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-x-3 py-2 text-lg"
+              >
+                <span className="truncate font-bold">{p.name}</span>
+                <span className="w-12 text-right font-semibold text-slate-500">
+                  {p.incoming}
+                </span>
+                <span className="w-12 text-right font-extrabold text-brand dark:text-brand-light">
+                  {p.sold}
+                </span>
+                <span
+                  className={`w-12 text-right font-extrabold ${
+                    p.left < 0 ? "text-money-due" : "text-money-paid"
+                  }`}
+                >
+                  {p.left}
+                </span>
+              </div>
+            ))}
+            <div className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-x-3 border-t border-slate-200 pt-1 text-base font-bold dark:border-slate-700">
+              <span>Total</span>
+              <span className="w-12 text-right">{totalIn}</span>
+              <span className="w-12 text-right">{totalSold}</span>
+              <span className="w-12 text-right">{totalIn - totalSold}</span>
+            </div>
+          </div>
+        )}
+        <p className="mt-1 px-1 text-sm text-slate-400">
+          In = taken from source · Sold = delivered · Left = remaining stock.
+        </p>
+      </section>
 
       {/* Top customers */}
       <section>

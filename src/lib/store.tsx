@@ -14,6 +14,7 @@ import type {
   Delivery,
   DeliveryItem,
   Product,
+  StockItem,
 } from "./types";
 import { loadData, newId, saveData } from "./storage";
 import { buildSeedData } from "./seed";
@@ -38,6 +39,8 @@ interface StoreContextValue {
   addDelivery: (input: NewDeliveryInput) => Delivery;
   addPayment: (customerId: string, amount: number) => Delivery;
   deleteDelivery: (id: string) => void;
+  addStockEntry: (items: StockItem[]) => void;
+  deleteStockEntry: (id: string) => void;
   addCustomer: (name: string, isDealer: boolean) => void;
   updateCustomer: (id: string, patch: Partial<Customer>) => void;
   removeCustomer: (id: string) => void;
@@ -172,6 +175,33 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     [update]
   );
 
+  const addStockEntry = useCallback(
+    (items: StockItem[]) =>
+      update((prev) => ({
+        ...prev,
+        stockEntries: [
+          ...prev.stockEntries,
+          {
+            id: newId(),
+            date: new Date().toISOString(),
+            items,
+            totalQty: items.reduce((s, it) => s + it.quantity, 0),
+            createdAt: new Date().toISOString(),
+          },
+        ],
+      })),
+    [update]
+  );
+
+  const deleteStockEntry = useCallback(
+    (id: string) =>
+      update((prev) => ({
+        ...prev,
+        stockEntries: prev.stockEntries.filter((s) => s.id !== id),
+      })),
+    [update]
+  );
+
   const addCustomer = useCallback(
     (name: string, isDealer: boolean) =>
       update((prev) => ({
@@ -256,6 +286,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       addDelivery,
       addPayment,
       deleteDelivery,
+      addStockEntry,
+      deleteStockEntry,
       addCustomer,
       updateCustomer,
       removeCustomer,
@@ -276,6 +308,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       addDelivery,
       addPayment,
       deleteDelivery,
+      addStockEntry,
+      deleteStockEntry,
       addCustomer,
       updateCustomer,
       removeCustomer,
